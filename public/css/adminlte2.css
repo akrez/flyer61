@@ -1,0 +1,15 @@
+html,
+body {
+    font-family: 'Vazirmatn' !important;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+}
+
+.sidebar-mini.sidebar-collapse .user-panel {
+    display: none !important;
+    -webkit-transform: translateZ(0);
+}
+
+.main-header .sidebar-toggle::before {
+    content: "\e236";
+}
