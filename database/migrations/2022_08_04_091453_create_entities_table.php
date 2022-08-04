@@ -14,7 +14,13 @@ class CreateEntitiesTable extends Migration
     public function up()
     {
         Schema::create('entities', function (Blueprint $table) {
-            $table->id();
+            $table->string('barcode', 32)->primary();
+            $table->string('type', 32);
+            $table->string('title', 512)->nullable();
+            $table->decimal('qty')->nullable();
+            $table->string('place', 32)->nullable();
+            $table->text('description')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
