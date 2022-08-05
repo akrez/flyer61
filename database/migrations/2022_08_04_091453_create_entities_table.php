@@ -15,7 +15,7 @@ class CreateEntitiesTable extends Migration
     {
         Schema::create('entities', function (Blueprint $table) {
             $table->string('barcode', 32)->primary();
-            $table->string('type', 32);
+            $table->string('entity_type', 32);
             $table->string('title', 512)->nullable();
             $table->decimal('qty')->nullable();
             $table->string('place', 32)->nullable();
