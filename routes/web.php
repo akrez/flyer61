@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EntityController;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +23,5 @@ Auth::routes([
 ]);
 
 Route::get(RouteServiceProvider::HOME, [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/entity/upload', [EntityController::class, 'upload'])->name('entity-upload');
+Route::post('/entity/import', [EntityController::class, 'import'])->name('entity-import');
