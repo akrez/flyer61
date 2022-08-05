@@ -8,6 +8,7 @@
                 </div>
             </div>
 
+            <!--
             <div class="user-panel">
                 <div class="pull-left image">
                     <img src="{{asset('images/default-profile.jpg')}}" class="img-circle" alt="User Image">
@@ -27,12 +28,18 @@
                     </span>
                 </div>
             </form>
+            -->
 
             <ul class="sidebar-menu">
 
                 <li class="header">منو اصلی</li>
 
-                <li><a href="#"><i class="glyphicon glyphicon-user"></i><span> Link num.1</span></a></li>
+                <li>
+                    <a href="{{route('entity-upload')}}">
+                        <i class="fas fa-upload"></i>
+                        <span>@lang('Upload entity excel')</span>
+                    </a>
+                </li>
 
             </ul>
 
