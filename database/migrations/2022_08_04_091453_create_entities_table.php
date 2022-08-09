@@ -19,8 +19,8 @@ class CreateEntitiesTable extends Migration
             $table->string('title', 512)->nullable();
             $table->decimal('qty')->nullable();
             $table->string('place', 32)->nullable();
-            $table->text('description')->nullable();
-            $table->softDeletes();
+            $table->string('description', 2048)->nullable();
+            $table->unsignedBigInteger('upload_seq')->nullable();
             $table->timestamps();
         });
     }
