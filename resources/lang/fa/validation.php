@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     /*
     |--------------------------------------------------------------------------
     | Validation Language Lines
@@ -158,6 +157,21 @@ return [
     |
     */
 
-    'attributes' => [],
-
+    'attributes' => [
+        'entity_type' => 'نوع دارایی',
+        'rewrite' => 'بازنویسی',
+        'file' => 'فایل',
+        'title' => 'عنوان',
+        'barcode' => 'بارکد',
+        'place' => 'محل نگهداری',
+        'qty' => 'مقدار',
+        'description' => 'توضیحات',
+        'upload_seq' => 'مرتبه آپلود',
+        'created_at' => 'ایجاد شده در',
+        'updated_at' => 'ویرایش شده در',
+        'created_at_since'=>'ایجاد شده از',
+        'created_at_until'=>'ایجاد شده تا',
+        'updated_at_since'=>'ویرایش شده از',
+        'updated_at_until'=>'ویرایش شده تا',
+    ],
 ];

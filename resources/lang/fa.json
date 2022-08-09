@@ -740,5 +740,19 @@
     "Zambia": "زامبیا",
     "Zimbabwe": "زیمباوه",
     "Zip / Postal Code": "کد پستی",
-    "Åland Islands": "جزایر الند"
+    "Åland Islands": "جزایر الند",
+    "Index":"ردیف",
+    "Upload entity excel": "آپلود اکسل دارایی‌ها",
+    "Download entity excel": "دانلود اکسل دارایی‌ها",
+    "Entities index":"لیست دارایی‌ها",
+    "Upload": "آپلود",
+    "Farvand": "فروند",
+    "Ghate": "قطعه",
+    "Amval": "اموال",
+    "Mavad": "مواد اولیه",
+    "Reseler": "ریسلر",
+    "Samane": "سامانه",
+    "If the barcode is duplicated, should it be rewritten?": "در صورت تکراری بودن بارکد، بازنویسی شود؟",
+    "Entity type": "نوع دارایی",
+    "Overwrite": "بازنویسی"
 }
