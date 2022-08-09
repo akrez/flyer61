@@ -25,3 +25,5 @@ Auth::routes([
 Route::get(RouteServiceProvider::HOME, [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/entity/upload', [EntityController::class, 'upload'])->name('entity-upload');
 Route::post('/entity/import', [EntityController::class, 'import'])->name('entity-import');
+Route::get('/entity/export', [EntityController::class, 'export'])->name('entity-export');
+Route::get('/entity/index', [EntityController::class, 'index'])->name('entity-index');
