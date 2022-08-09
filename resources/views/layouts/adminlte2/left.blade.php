@@ -35,6 +35,13 @@
                 <li class="header">منو اصلی</li>
 
                 <li>
+                    <a href="{{ route('entity-index') }}">
+                        <i class="fas fa-cube"></i>
+                        <span>@lang('Entities index')</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="{{route('entity-upload')}}">
                         <i class="fas fa-upload"></i>
                         <span>@lang('Upload entity excel')</span>
