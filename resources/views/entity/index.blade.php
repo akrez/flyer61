@@ -70,18 +70,8 @@
                                     value="{{ request()->get('description') }}">
                             </td>
                             <td>
-                                <div class="form-group {{ $errors->get('entity_type') ? 'has-error' : '' }}">
-                                    <select class="form-control" name="entity_type">
-                                        <option></option>
-                                        @foreach ($entity_types as $typeValue)
-                                        <option value="{{ $typeValue }}" {{ request()->get('entity_type') == $typeValue
-                                            ? 'selected'
-                                            : '' }}>
-                                            {{ App\Models\Entity::getEntityTypeName($typeValue) }}
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                                <input type="text" class="form-control" name="entity_type"
+                                    value="{{ request()->get('entity_type') }}">
                             </td>
                             <td>
                                 <input type="text" class="form-control" name="upload_seq"
@@ -115,7 +105,7 @@
                             <td>{{ $entity->place }}</td>
                             <td>{{ $entity->qty }}</td>
                             <td>{{ $entity->description }}</td>
-                            <td>{{ App\Models\Entity::getEntityTypeName($entity->entity_type) }}</td>
+                            <td>{{ $entity->entity_type }}</td>
                             <td>{{ $entity->upload_seq }}</td>
                             <td>{{ $entity->jalaliCreatedAt() }}</td>
                             <td>{{ $entity->jalaliUpdatedAt() }}</td>

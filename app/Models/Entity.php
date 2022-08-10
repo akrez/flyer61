@@ -12,13 +12,10 @@ class Entity extends Model
     use HasFactory;
     use JalaliDateFormat;
 
-    public const ENTITY_TYPES = [
-        'farvand',
-        'ghate',
-        'amval',
-        'mavad',
-        'reseler',
-        'samane',
+    public const IMPORT_MODES = [
+        'upsert',
+        'update',
+        'insert',
     ];
 
     public static $sortable = [
@@ -36,40 +33,6 @@ class Entity extends Model
     protected $keyType = 'string';
     protected $fillable = ['title', 'qty', 'place', 'entity_type', 'description'];
 
-    // public static function boot()
-    // {
-    //     parent::boot();
-    //     static::creating(function ($table) {
-    //         dd('creating');
-    //         $table->foo = 'Bar';
-    //     });
-    //     static::updating(function ($table) {
-    //         dd('updating');
-    //         $table->is_online = $this->freshTimestamp();
-    //     });
-    // }
-
-    public static function getEntityTypeName($entityType, $translate = true)
-    {
-        $list = [
-            'farvand' => 'Farvand',
-            'ghate' => 'Ghate',
-            'amval' => 'Amval',
-            'mavad' => 'Mavad',
-            'reseler' => 'Reseler',
-            'samane' => 'Samane',
-        ];
-
-        if (isset($list[$entityType])) {
-            $name = $list[$entityType];
-            if ($translate) {
-                $name = __($name);
-            }
-        }
-
-        return $name;
-    }
-
     public static function getEntityRule($ruleKey, $appendRequired = true)
     {
         $rule = [];
@@ -77,7 +40,7 @@ class Entity extends Model
         if ('barcode' == $ruleKey) {
             $rule = ['max:32'];
         } elseif ('entity_type' == $ruleKey) {
-            $rule = ['max:32', Rule::in(static::ENTITY_TYPES)];
+            $rule = ['max:32'];
         } elseif ('title' == $ruleKey) {
             $rule = ['max:512'];
         } elseif ('qty' == $ruleKey) {
@@ -86,8 +49,8 @@ class Entity extends Model
             $rule = ['max:32'];
         } elseif ('description' == $ruleKey) {
             $rule = ['max:2048'];
-        } elseif ('rewrite' == $ruleKey) {
-            $rule = ['boolean'];
+        } elseif ('import_mode' == $ruleKey) {
+            $rule = [Rule::in(static::IMPORT_MODES)];
         } elseif ('file' == $ruleKey) {
             $rule = ['mimes:xls,xlsx'];
         } elseif ('created_at_since' == $ruleKey) {

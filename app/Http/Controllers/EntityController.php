@@ -33,48 +33,71 @@ class EntityController extends Controller
 
         return view('entity.index', [
             'entities' => $entities,
-            'entity_types' => Entity::ENTITY_TYPES,
             'sortable' => Entity::$sortable,
         ]);
     }
 
     public function export(IndexEntityRequest $request)
     {
+        $sheetsData = [];
         $entities = static::buildEntityQuery($request)->get();
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $sheet->setRightToLeft(true);
-
-        $sheet->setCellValue('A1', __('Index'));
-        $sheet->setCellValue('B1', __('validation.attributes.title'));
-        $sheet->setCellValue('C1', __('validation.attributes.barcode'));
-        $sheet->setCellValue('D1', __('validation.attributes.place'));
-        $sheet->setCellValue('E1', __('validation.attributes.qty'));
-        $sheet->setCellValue('F1', __('validation.attributes.description'));
-        $sheet->setCellValue('G1', __('validation.attributes.entity_type'));
-        $sheet->setCellValue('H1', __('validation.attributes.upload_seq'));
-        $sheet->setCellValue('I1', __('validation.attributes.created_at'));
-        $sheet->setCellValue('J1', __('validation.attributes.updated_at'));
-
-        $rows = 2;
         foreach ($entities as $entity) {
-            $sheet->setCellValue('A'.$rows, $rows - 1);
-            $sheet->setCellValue('B'.$rows, $entity->title);
-            $sheet->setCellValue('C'.$rows, $entity->barcode);
-            $sheet->setCellValue('D'.$rows, $entity->place);
-            $sheet->setCellValue('E'.$rows, $entity->qty);
-            $sheet->setCellValue('F'.$rows, $entity->description);
-            $sheet->setCellValue('G'.$rows, Entity::getEntityTypeName($entity->entity_type));
-            $sheet->setCellValue('H'.$rows, $entity->upload_seq);
-            $sheet->setCellValue('I'.$rows, $entity->jalaliCreatedAt());
-            $sheet->setCellValue('J'.$rows, $entity->jalaliUpdatedAt());
-            ++$rows;
+            $sheetTitle = $entity->entity_type;
+            if (!isset($sheetsData[$sheetTitle])) {
+                $sheetsData[$sheetTitle] = [];
+            }
+            $newRowIndex = count($sheetsData[$sheetTitle]);
+            $sheetsData[$sheetTitle][$newRowIndex] = [
+                0 => $newRowIndex + 1,
+                1 => $entity->title,
+                2 => $entity->barcode,
+                3 => $entity->place,
+                4 => $entity->qty,
+                5 => $entity->description,
+                6 => $entity->entity_type,
+                7 => $entity->upload_seq,
+                8 => $entity->jalaliCreatedAt(),
+                9 => $entity->jalaliUpdatedAt(),
+            ];
         }
 
-        foreach (range('A', 'J') as $col) {
-            $sheet->getColumnDimension($col)->setAutoSize(true);
+        $headerRow = [
+            __('Index'),
+            __('validation.attributes.title'),
+            __('validation.attributes.barcode'),
+            __('validation.attributes.place'),
+            __('validation.attributes.qty'),
+            __('validation.attributes.description'),
+            __('validation.attributes.entity_type'),
+            __('validation.attributes.upload_seq'),
+            __('validation.attributes.created_at'),
+            __('validation.attributes.updated_at'),
+        ];
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->removeSheetByIndex(0);
+
+        foreach ($sheetsData as $sheetTitle => $sheetRows) {
+            $sheet = $spreadsheet->createSheet();
+            $sheet->setTitle($sheetTitle);
+            $sheet->setRightToLeft(true);
+
+            array_unshift($sheetRows, $headerRow);
+            foreach ($sheetRows as $sheetRowKey => $sheetRow) {
+                $sheet->setCellValue('A'.($sheetRowKey + 1), $sheetRow[0]);
+                $sheet->setCellValue('B'.($sheetRowKey + 1), $sheetRow[1]);
+                $sheet->setCellValue('C'.($sheetRowKey + 1), $sheetRow[2]);
+                $sheet->setCellValue('D'.($sheetRowKey + 1), $sheetRow[3]);
+                $sheet->setCellValue('E'.($sheetRowKey + 1), $sheetRow[4]);
+                $sheet->setCellValue('F'.($sheetRowKey + 1), $sheetRow[5]);
+                $sheet->setCellValue('G'.($sheetRowKey + 1), $sheetRow[6]);
+                $sheet->setCellValue('H'.($sheetRowKey + 1), $sheetRow[7]);
+                $sheet->setCellValue('I'.($sheetRowKey + 1), $sheetRow[8]);
+                $sheet->setCellValue('J'.($sheetRowKey + 1), $sheetRow[9]);
+            }
+            foreach (range('A', 'J') as $columns) {
+                $sheet->getColumnDimension($columns)->setAutoSize(true);
+            }
         }
 
         $writer = new XlsxWriter($spreadsheet);
@@ -91,7 +114,7 @@ class EntityController extends Controller
     public function upload()
     {
         return view('entity.upload', [
-            'entity_types' => Entity::ENTITY_TYPES,
+            'import_modes' => Entity::IMPORT_MODES,
         ]);
     }
 
@@ -100,57 +123,60 @@ class EntityController extends Controller
         $reader = new XlsxReader();
         $reader->setReadDataOnly(true);
         $spreadsheet = $reader->load($request->file('file')->getRealPath());
-        $sheet = $spreadsheet->getSheet($spreadsheet->getFirstSheetIndex());
-        $rows = $sheet->toArray();
 
         $maxUploadSeq = (int) Entity::max('upload_seq') + 1;
 
-        $qtyIsRequired = (in_array($request->entity_type, ['mavad']));
         $rules = [
             'title' => Entity::getEntityRule('title'),
             'barcode' => Entity::getEntityRule('barcode'),
             'place' => Entity::getEntityRule('place'),
-            'qty' => Entity::getEntityRule('qty', $qtyIsRequired),
+            'entity_type' => Entity::getEntityRule('entity_type'),
             'description' => Entity::getEntityRule('description', false),
         ];
 
-        $datas = [];
-        foreach ($rows as $rowIndex => $row) {
-            if (0 == $rowIndex) {
-                continue;
-            }
+        foreach ($spreadsheet->getAllSheets() as $sheetIndex => $sheet) {
+            $qtyIsRequired = (1 > $sheetIndex);
+            $rules['qty'] = Entity::getEntityRule('qty', $qtyIsRequired);
 
-            $row = $row + array_fill(0, 6, null);
-            array_walk($row, function (&$item, $key) {
-                if (is_scalar($item) and null !== $item) {
-                    $item = trim($item);
-                    if (0 == mb_strlen($item)) {
-                        $item = null;
-                    }
+            $datas = [];
+            foreach ($sheet->toArray() as $rowIndex => $row) {
+                if (0 == $rowIndex) {
+                    continue;
                 }
-            });
 
-            $barcode = $row[2];
-            if (empty($barcode)) {
-                continue;
+                $row = $row + array_fill(0, 6, null);
+                array_walk($row, function (&$item, $key) {
+                    if (is_scalar($item) and null !== $item) {
+                        $item = trim($item);
+                        if (0 == mb_strlen($item)) {
+                            $item = null;
+                        }
+                    }
+                });
+
+                $barcode = $row[2];
+                if (empty($barcode)) {
+                    continue;
+                }
+
+                $data = [
+                    'title' => $row[1],
+                    'barcode' => $barcode,
+                    'place' => $row[3],
+                    'entity_type' => $sheet->getTitle(),
+                    'qty' => $row[4],
+                    'description' => $row[5],
+                ];
+
+                $validator = Validator::make($data, $rules);
+                if ($validator->fails()) {
+                    Session::flash('errors_header', (__('validation.attributes.barcode').' '.$barcode));
+
+                    return redirect()->route('entity-upload')->withErrors($validator);
+                }
+
+                $datas[$barcode] = $data;
             }
-
-            $data = [
-                'title' => $row[1],
-                'barcode' => $barcode,
-                'place' => $row[3],
-                'qty' => $row[4],
-                'description' => $row[5],
-            ];
-
-            $validator = Validator::make($data, $rules);
-            if ($validator->fails()) {
-                Session::flash('errors_header', (__('validation.attributes.barcode').' '.$barcode));
-
-                return redirect()->route('entity-upload')->withErrors($validator);
-            }
-
-            $datas[$barcode] = $data;
         }
 
         $oldAttributesArray = [];
@@ -158,15 +184,16 @@ class EntityController extends Controller
         foreach ($datas as $barcode => $data) {
             $model = Entity::query()->firstWhere('barcode', '=', $barcode);
             if ($model) {
-                $oldAttributes = $model->toArray();
-                if (!$request->rewrite) {
+                if (!in_array($request->import_mode, ['update', 'upsert'])) {
                     continue;
                 }
             } else {
                 $model = new Entity();
-                $oldAttributes = $model->toArray();
-                $model->entity_type = $request->entity_type;
+                if (!in_array($request->import_mode, ['insert', 'upsert'])) {
+                    continue;
+                }
             }
+            $oldAttributes = $model->toArray();
             $model->fill($data);
             $newAttributes = $model->getDirty();
             $model->barcode = $barcode;
@@ -204,9 +231,6 @@ class EntityController extends Controller
     {
         $entities = Entity::query();
 
-        if ($request->entity_type) {
-            $entities = $entities->where('entity_type', '=', $request->entity_type);
-        }
         if ($request->upload_seq) {
             $entities = $entities->where('upload_seq', '=', $request->upload_seq);
         }
@@ -214,6 +238,9 @@ class EntityController extends Controller
             $entities = $entities->where('qty', '=', $request->qty);
         }
 
+        if ($request->entity_type) {
+            $entities = $entities->where('entity_type', 'LIKE', '%'.$request->entity_type.'%');
+        }
         if ($request->barcode) {
             $entities = $entities->where('barcode', 'LIKE', '%'.$request->barcode.'%');
         }
@@ -242,7 +269,8 @@ class EntityController extends Controller
 
         $entities
             ->orderBy('upload_seq', 'DESC')
-            ->orderBy('barcode', 'DESC');
+            ->orderBy('barcode', 'DESC')
+        ;
 
         return $entities;
     }

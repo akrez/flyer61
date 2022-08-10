@@ -11,30 +11,6 @@
     <form action="{{ route('entity-import') }}" method="post" enctype="multipart/form-data" id="entity-form">
         @csrf
         <div class="box-body">
-            <div class="col-md-2">
-                <div class="form-group {{$errors->get('entity_type') ? 'has-error' : ''}}">
-                    <label for="entity_type">@lang("Entity type")</label>
-                    <select class="form-control" name="entity_type">
-                        <option></option>
-                        @foreach ($entity_types as $typeValue)
-                        <option value="{{$typeValue}}" {{ old("entity_type")==$typeValue ? "selected" : "" }}>
-                            {{ App\Models\Entity::getEntityTypeName($typeValue) }}
-                        </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="form-group {{$errors->get('rewrite') ? 'has-error' : ''}}">
-                <div class="col-md-12">
-                    <div class="checkbox">
-                        <label>
-                            <input type="hidden" name="rewrite" value="0">
-                            <input type="checkbox" name="rewrite" value="1" {{ old("rewrite") ? "checked" : "" }}>
-                            @lang("If the barcode is duplicated, should it be rewritten?")
-                        </label>
-                    </div>
-                </div>
-            </div>
             <div class="form-group {{$errors->get('file') ? 'has-error' : ''}}">
                 <div class="col-md-12">
                     <label class="btn btn-default btn-social" for="entity-file-input">
@@ -43,6 +19,18 @@
                     </label>
                     <input name="file" id="entity-file-input" type="file" class="hidden"
                         onchange="$('#entity-file-placeholder').text(this.files[0].name)">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group {{$errors->get('import_mode') ? 'has-error' : ''}}">
+                    <label for="import_mode"></label>
+                    <select class="form-control" name="import_mode">
+                        @foreach ($import_modes as $import_mode)
+                        <option value="{{$import_mode}}" {{ old("import_mode")==$import_mode ? "selected" : "" }}>
+                            @lang('import_mode_' . $import_mode)
+                        </option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
         </div>

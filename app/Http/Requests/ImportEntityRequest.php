@@ -25,8 +25,7 @@ class ImportEntityRequest extends FormRequest
     public function rules()
     {
         return [
-            'entity_type' => Entity::getEntityRule('entity_type'),
-            'rewrite' => Entity::getEntityRule('rewrite'),
+            'import_mode' => Entity::getEntityRule('import_mode'),
             'file' => Entity::getEntityRule('file'),
         ];
     }

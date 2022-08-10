@@ -159,7 +159,6 @@ return [
 
     'attributes' => [
         'entity_type' => 'نوع دارایی',
-        'rewrite' => 'بازنویسی',
         'file' => 'فایل',
         'title' => 'عنوان',
         'barcode' => 'بارکد',
