@@ -48,6 +48,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{route('entitylog-index')}}">
+                        <i class="fas fa-exchange-alt"></i>
+                        <span>@lang('Entities log index')</span>
+                    </a>
+                </li>
+
             </ul>
 
         </section>
