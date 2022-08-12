@@ -20,22 +20,13 @@ class Entity extends Model
         'insert',
     ];
 
-    public static $sortable = [
-        'barcode',
-        'entity_type',
-        'title',
-        'qty',
-        'place',
-        'created_at',
-        'updated_at',
-    ];
     public $incrementing = false;
 
     protected $primaryKey = 'barcode';
     protected $keyType = 'string';
     protected $fillable = ['title', 'qty', 'place', 'entity_type', 'description'];
 
-    public static function getEntityRule($ruleKey, $appendRequired = true)
+    public static function getEntityRule($ruleKey, $prependRequired = true)
     {
         $rule = [];
 
@@ -43,6 +34,8 @@ class Entity extends Model
             $rule = ['max:32'];
         } elseif ('entity_type' == $ruleKey) {
             $rule = ['max:32'];
+        } elseif ('upload_seq' == $ruleKey) {
+            $rule = ['integer'];
         } elseif ('title' == $ruleKey) {
             $rule = ['max:512'];
         } elseif ('qty' == $ruleKey) {
@@ -63,11 +56,9 @@ class Entity extends Model
             $rule = ['regex:/^\d{4}-\d{2}-\d{2}$/'];
         } elseif ('updated_at_until' == $ruleKey) {
             $rule = ['regex:/^\d{4}-\d{2}-\d{2}$/'];
-        } else {
-            exit($ruleKey);
         }
 
-        if ($appendRequired) {
+        if ($prependRequired) {
             array_unshift($rule, 'required');
         } else {
             array_unshift($rule, 'nullable');
