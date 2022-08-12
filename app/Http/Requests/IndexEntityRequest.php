@@ -29,6 +29,7 @@ class IndexEntityRequest extends FormRequest
             'entity_type' => Entity::getEntityRule('entity_type', false),
             'title' => Entity::getEntityRule('title', false),
             'qty' => Entity::getEntityRule('qty', false),
+            'upload_seq' => Entity::getEntityRule('upload_seq', false),
             'place' => Entity::getEntityRule('place', false),
             'description' => Entity::getEntityRule('description', false),
             'created_at_since' => Entity::getEntityRule('created_at_since', false),
