@@ -33,7 +33,6 @@ class EntityController extends Controller
 
         return view('entity.index', [
             'entities' => $entities,
-            'sortable' => Entity::$sortable,
         ]);
     }
 
@@ -212,6 +211,7 @@ class EntityController extends Controller
                 $entityLog->attribute = $newAttributeName;
                 $entityLog->old_value = (isset($oldAttributesArray[$barcode][$newAttributeName]) ? $oldAttributesArray[$barcode][$newAttributeName] : null);
                 $entityLog->new_value = $newAttributevalue;
+                $entityLog->upload_seq = $maxUploadSeq;
                 if ($entityLog->save()) {
                 }
             }
