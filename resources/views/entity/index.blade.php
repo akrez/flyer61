@@ -9,6 +9,16 @@
 
 <div class="box box-info">
     <form action="{{ route('entity-index') }}" method="get" enctype="multipart/form-data" id="entity-form">
+        <div class="box-header">
+            <div class="col-md-9">
+            </div>
+            <div class="col-md-3">
+                <a class="btn btn-success btn-social btn-block" href="{{ route('entity-export', request()->query()) }}">
+                    <i class="far fa-file-excel"></i>
+                    @lang("Download entity excel")
+                </a>
+            </div>
+        </div>
         <div class="box-body">
             <div class="col-sm-12">
                 <table class="table table-striped table-bordered">
@@ -90,7 +100,8 @@
                                     value="{{ request()->get('updated_at_until') }}">
                             </td>
                             <td>
-                                <button type="submit" class="btn btn-info btn-block">
+                                <button type="submit" class="btn btn-info btn-block btn-social">
+                                    <i class="fas fa-search"></i>
                                     @lang('Search')
                                 </button>
                             </td>
@@ -116,17 +127,13 @@
                 </table>
             </div>
         </div>
+        @if ($entities->hasPages())
         <div class="box-footer">
-            <div class="col-md-10">
+            <div class="col-md-12">
                 {{ $entities->onEachSide(5)->links() }}
             </div>
-            <div class="col-md-2">
-                <a class="btn btn-success btn-block" href="{{ route('entity-export', request()->query()) }}"
-                    style="margin: 20px 0;">
-                    @lang("Download entity excel")
-                </a>
-            </div>
         </div>
+        @endif
     </form>
 </div>
 @endsection
