@@ -22,6 +22,7 @@ class CreateEntityLogsTable extends Migration
             $table->softDeletes();
             $table->timestamps();
             $table->foreign('barcode')->references('barcode')->on('entities')->onDelete('NO ACTION')->onUpdate('NO ACTION');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('NO ACTION')->onUpdate('NO ACTION');
         });
     }
 
