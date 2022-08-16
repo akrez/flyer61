@@ -83,16 +83,16 @@ class EntityController extends Controller
 
             array_unshift($sheetRows, $headerRow);
             foreach ($sheetRows as $sheetRowKey => $sheetRow) {
-                $sheet->setCellValue('A'.($sheetRowKey + 1), $sheetRow[0]);
-                $sheet->setCellValue('B'.($sheetRowKey + 1), $sheetRow[1]);
-                $sheet->setCellValue('C'.($sheetRowKey + 1), $sheetRow[2]);
-                $sheet->setCellValue('D'.($sheetRowKey + 1), $sheetRow[3]);
-                $sheet->setCellValue('E'.($sheetRowKey + 1), $sheetRow[4]);
-                $sheet->setCellValue('F'.($sheetRowKey + 1), $sheetRow[5]);
-                $sheet->setCellValue('G'.($sheetRowKey + 1), $sheetRow[6]);
-                $sheet->setCellValue('H'.($sheetRowKey + 1), $sheetRow[7]);
-                $sheet->setCellValue('I'.($sheetRowKey + 1), $sheetRow[8]);
-                $sheet->setCellValue('J'.($sheetRowKey + 1), $sheetRow[9]);
+                $sheet->setCellValue('A' . ($sheetRowKey + 1), $sheetRow[0]);
+                $sheet->setCellValue('B' . ($sheetRowKey + 1), $sheetRow[1]);
+                $sheet->setCellValue('C' . ($sheetRowKey + 1), $sheetRow[2]);
+                $sheet->setCellValue('D' . ($sheetRowKey + 1), $sheetRow[3]);
+                $sheet->setCellValue('E' . ($sheetRowKey + 1), $sheetRow[4]);
+                $sheet->setCellValue('F' . ($sheetRowKey + 1), $sheetRow[5]);
+                $sheet->setCellValue('G' . ($sheetRowKey + 1), $sheetRow[6]);
+                $sheet->setCellValue('H' . ($sheetRowKey + 1), $sheetRow[7]);
+                $sheet->setCellValue('I' . ($sheetRowKey + 1), $sheetRow[8]);
+                $sheet->setCellValue('J' . ($sheetRowKey + 1), $sheetRow[9]);
             }
             foreach (range('A', 'J') as $columns) {
                 $sheet->getColumnDimension($columns)->setAutoSize(true);
@@ -101,7 +101,7 @@ class EntityController extends Controller
 
         $writer = new XlsxWriter($spreadsheet);
         header('Content-Type: application/vnd.ms-excel');
-        header('Content-Disposition: attachment; filename="entities '.Helper::unixToJalali(\time(), 'Y-m-d').'.xlsx"');
+        header('Content-Disposition: attachment; filename="entities ' . Helper::unixToJalali(\time(), 'Y-m-d') . '.xlsx"');
         $writer->save('php://output');
     }
 
@@ -128,15 +128,13 @@ class EntityController extends Controller
         $rules = [
             'title' => Entity::getEntityRule('title'),
             'barcode' => Entity::getEntityRule('barcode'),
-            'place' => Entity::getEntityRule('place'),
+            'place' => Entity::getEntityRule('place', false),
+            'qty' => Entity::getEntityRule('qty', false),
             'entity_type' => Entity::getEntityRule('entity_type'),
             'description' => Entity::getEntityRule('description', false),
         ];
 
         foreach ($spreadsheet->getAllSheets() as $sheetIndex => $sheet) {
-            $qtyIsRequired = (1 > $sheetIndex);
-            $rules['qty'] = Entity::getEntityRule('qty', $qtyIsRequired);
-
             $datas = [];
             foreach ($sheet->toArray() as $rowIndex => $row) {
                 if (0 == $rowIndex) {
@@ -169,7 +167,7 @@ class EntityController extends Controller
 
                 $validator = Validator::make($data, $rules);
                 if ($validator->fails()) {
-                    Session::flash('errors_header', (__('validation.attributes.barcode').' '.$barcode));
+                    Session::flash('errors_header', (__('validation.attributes.barcode') . ' ' . $barcode));
 
                     return redirect()->route('entity-upload')->withErrors($validator);
                 }
