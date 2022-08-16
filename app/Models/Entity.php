@@ -39,7 +39,7 @@ class Entity extends Model
         } elseif ('title' == $ruleKey) {
             $rule = ['max:512'];
         } elseif ('qty' == $ruleKey) {
-            $rule = ['nullable', 'numeric', 'gt:0'];
+            $rule = ['max:32'];
         } elseif ('place' == $ruleKey) {
             $rule = ['max:32'];
         } elseif ('description' == $ruleKey) {
