@@ -22,6 +22,8 @@
     <link rel="stylesheet" href="{{asset('dist/adminlte-2-rtl/css/_all-skins.min.css')}}">
     <!-- Bootstrap-Social -->
     <link rel="stylesheet" href="{{asset('dist/bootstrap-social-rtl/bootstrap-social.css')}}">
+    <!-- Persian-Datepicker -->
+    <link rel="stylesheet" href="{{asset('dist/persian-datepicker/css/persian-datepicker.css')}}">
     <!-- style -->
     <link rel="stylesheet" href="{{asset('css/adminlte2.css')}}">
     @yield('POS_HEAD')
@@ -72,7 +74,9 @@
     <script src="{{asset('dist/adminlte-2-rtl/js/adminlte.min.js')}}"></script>
     <!-- script -->
     <script src="{{asset('js/adminlte2.js')}}"></script>
-
+    <!-- Persian-Datepicker -->
+    <script src="{{asset('dist/persian-datepicker/js/persian-date.min.js')}}"></script>
+    <script src="{{asset('dist/persian-datepicker/js/persian-datepicker.min.js')}}"></script>
     @yield('POS_END')
 </body>
 

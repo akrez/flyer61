@@ -740,5 +740,16 @@
     "Zambia": "زامبیا",
     "Zimbabwe": "زیمباوه",
     "Zip / Postal Code": "کد پستی",
-    "Åland Islands": "جزایر الند"
+    "Åland Islands": "جزایر الند",
+    "Index": "ردیف",
+    "Upload entity excel": "آپلود اکسل دارایی‌ها",
+    "Download entity excel": "دانلود اکسل دارایی‌ها",
+    "Entities index": "لیست دارایی‌ها",
+    "Download entity log excel": "دانلود اکسل تغییرات دارایی‌ها",
+    "Entities log index": "لیست تغییرات دارایی‌ها",
+    "Upload": "آپلود",
+    "Import mode": "نحوه ورود اطلاعات دارایی‌ها",
+    "import_mode_upsert": "اطلاعات جدید ایجاد و اطلاعات قبلی بازنویسی شوند",
+    "import_mode_insert": "فقط اطلاعات جدید ایجاد شود",
+    "import_mode_update": "فقط اطلاعات قبلی بازنویسی شود"
 }
