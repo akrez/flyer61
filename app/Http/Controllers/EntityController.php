@@ -134,8 +134,13 @@ class EntityController extends Controller
             'description' => Entity::getEntityRule('description', false),
         ];
 
+        $datas = [];
+        $duplicateBarcodes = [];
+        $duplicateBarcodesAlerts = [];
         foreach ($spreadsheet->getAllSheets() as $sheetIndex => $sheet) {
-            $datas = [];
+
+            $sheetTitle = $sheet->getTitle();
+
             foreach ($sheet->toArray() as $rowIndex => $row) {
                 if (0 == $rowIndex) {
                     continue;
@@ -152,7 +157,17 @@ class EntityController extends Controller
                 });
 
                 $barcode = $row[2];
-                if (empty($barcode)) {
+
+                if ($this->isAllCellEmpty($row)) {
+                    continue;
+                }
+
+                if (isset($datas[$barcode])) {
+                    if (!isset($duplicateBarcodes[$barcode])) {
+                        $duplicateBarcodes[$barcode] = 1;
+                    }
+                    $duplicateBarcodes[$barcode]++;
+                    $duplicateBarcodesAlerts[$barcode] = $barcode . ' ✖ ' . $duplicateBarcodes[$barcode];
                     continue;
                 }
 
@@ -160,20 +175,27 @@ class EntityController extends Controller
                     'title' => $row[1],
                     'barcode' => $barcode,
                     'place' => $row[3],
-                    'entity_type' => $sheet->getTitle(),
+                    'entity_type' => $sheetTitle,
                     'qty' => $row[4],
                     'description' => $row[5],
                 ];
 
                 $validator = Validator::make($data, $rules);
                 if ($validator->fails()) {
-                    Session::flash('errors_header', (__('validation.attributes.barcode') . ' ' . $barcode));
-
+                    Session::flash('errors_header', $sheetTitle . ', ' . __('Index') . ' ' . ($rowIndex + 1));
                     return redirect()->route('entity-upload')->withErrors($validator);
                 }
 
                 $datas[$barcode] = $data;
             }
+        }
+
+        if ($duplicateBarcodesAlerts) {
+            ksort($duplicateBarcodesAlerts);
+            Session::flash('errors_header', __('Duplicate barcode') . ' (' . count($duplicateBarcodesAlerts) . ' - ' . array_sum($duplicateBarcodes) . ')');
+            return redirect()->route('entity-upload')->withErrors([
+                'file' => $duplicateBarcodesAlerts,
+            ]);
         }
 
         $oldAttributesArray = [];
@@ -216,5 +238,15 @@ class EntityController extends Controller
         }
 
         return redirect()->route('entity-upload')->with('success', array_keys($newAttributesArray));
+    }
+
+    private function isAllCellEmpty($row)
+    {
+        foreach ($row as $cell) {
+            if ($cell) {
+                return false;
+            }
+        }
+        return true;
     }
 }
